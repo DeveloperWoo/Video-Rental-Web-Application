@@ -1,4 +1,4 @@
-@model  VideoRental.ViewModels.CustomerFormViewModel
+﻿@model  VideoRental.ViewModels.CustomerFormViewModel
 
 @{
     /**/
@@ -9,7 +9,7 @@
 
 <h2>New Customer</h2>
 
-@using (Html.BeginForm("Create", "Customers"))
+@using (Html.BeginForm("Save", "Customers"))
 {
     <div class="form-group">
         @Html.LabelFor(m => m.Customer.Name)
@@ -29,6 +29,8 @@
             @Html.CheckBoxFor(m => m.Customer.IsSubscribedToNewsletter) Subscribed to Newsletter?
         </label>
     </div>
+
+    @Html.HiddenFor(m => m.Customer.Id)
     <button type="submit" class="btn btn-primary">Save</button>
 }
 
