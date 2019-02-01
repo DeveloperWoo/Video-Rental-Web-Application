@@ -18,6 +18,7 @@ namespace VideoRental.Models
 
         public MembershipType MembershipType { get; set; }
 
+        [Display(Name = "Membership Type")]
         public byte MembershipTypeId { get; set; } //foreign key
 
         [Display(Name = "Date of Birth")]
