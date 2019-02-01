@@ -14,6 +14,8 @@ namespace VideoRental.Controllers
     {
         //Access Database
         private ApplicationDbContext _context;
+
+        //constructor
         public CustomersController()
         {
             _context = new ApplicationDbContext();
@@ -28,7 +30,7 @@ namespace VideoRental.Controllers
         public ActionResult New()
         {
             var membershipTypes = _context.MembershipTypes.ToList();
-            var viewModel = new NewCustomerViewModel
+            var viewModel = new CustomerFormViewModel
             {
                 MembershipTypes = membershipTypes
             };
@@ -60,6 +62,22 @@ namespace VideoRental.Controllers
                 return HttpNotFound();
 
             return View(customer);
-        }    
+        }   
+        
+        public ActionResult Edit(int id)
+        {
+            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+
+            if (customer == null)
+                return HttpNotFound(); //404 Error page
+
+            var viewModel = new CustomerFormViewModel
+            {
+                Customer = customer,
+                MembershipTypes = _context.MembershipTypes.ToList()
+            };
+
+            return View("CustomerForm", viewModel);
+        }
     }  
 }
