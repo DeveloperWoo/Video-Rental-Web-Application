@@ -22,6 +22,7 @@ namespace VideoRental.Models
         public byte MembershipTypeId { get; set; } //foreign key
 
         [Display(Name = "Date of Birth")]
+        [Min18YearsIfAMember]
         public DateTime? Birthdate { get; set; }
     }
 }
