@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using VideoRental.Models;
 using VideoRental.ViewModels;
+using VideoRental.Migrations;
 
 namespace VideoRental.Controllers
 {
@@ -29,6 +30,17 @@ namespace VideoRental.Controllers
         {
             var movies = _context.Movies.Include(m => m.Genre).ToList();
             return View(movies);
+        }
+
+        public ViewResult New()
+        {
+            var genres = _context.Genres.ToList();
+            var viewModel = new MovieFormViewModel
+            {
+                Genres = genres
+            };
+            
+            return View("MovieForm", viewModel); //View(string viewName, object model)
         }
 
         // GET: Movies/Random
@@ -65,12 +77,18 @@ namespace VideoRental.Controllers
 
         public ActionResult Edit(int id)
         {
-            return Content("id=" + id);
-            /*
-             * in the URL: movies/edit/1
-             * in the query string: movies/edit?id=1
-             * in the form data: id=1
-             */
+            var movie = _context.Movies.SingleOrDefault(c => c.Id == id);
+
+            if (movie == null)
+                return HttpNotFound(); //404 Error page
+
+            var viewModel = new MovieFormViewModel
+            {
+                Movie = movie,
+                Genres = _context.Genres.ToList()
+            };
+
+            return View("MovieForm", viewModel);
         }
 
 
@@ -88,6 +106,28 @@ namespace VideoRental.Controllers
                 return HttpNotFound();
 
             return View(movie);
+        }
+
+        [HttpPost]
+        public ActionResult Save(Movie movie)
+        {
+            if(movie.Id == 0)
+            {
+                movie.DateAdded = DateTime.Now;
+                _context.Movies.Add(movie);
+            }
+            else
+            {
+                var movieInDb = _context.Movies.Single(m => m.Id == movie.Id);
+                movieInDb.Name = movie.Name;
+                movieInDb.GenreId = movie.GenreId;
+                movieInDb.NumberInStock = movie.NumberInStock;
+                movieInDb.ReleaseDate = movie.ReleaseDate;
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Movies"); //RedirectToAction(string actionName, string controllerName)
         }
     }
 }
